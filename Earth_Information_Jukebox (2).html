@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Information Jukebox</title>
+<style>
+:root{--navy:#07182b;--blue:#123b60;--cyan:#48c5ed;--ink:#17324b;--muted:#5d7285;--line:#d8e5ee}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eaf5fb,#f8fbfd);color:var(--ink);padding:24px}
+main{max-width:1000px;margin:auto}
+.hero{background:radial-gradient(circle at 80% 15%,#286f9e,#123453 45%,#07182b 100%);color:white;border-radius:22px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 12px 30px #102e4930}
+.eyebrow{font-size:12px;letter-spacing:3px;color:#a9e8ff;font-weight:bold}
+h1{font-size:clamp(27px,5vw,44px);line-height:1.08;margin:12px 0}
+.hero p{color:#d6eaf5;margin:0;font-size:17px}
+.planet{font-size:100px;filter:drop-shadow(0 8px 20px #55c9ff55)}
+.tag{margin-top:18px;color:#b9d8e9;font-size:13px}
+h2{font-size:21px;margin:26px 0 8px}
+.sub{color:var(--muted);margin:0 0 15px;font-size:14px}
+.topics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.topic{background:white;border:2px solid var(--line);border-radius:15px;padding:16px;text-align:left;cursor:pointer;transition:.18s;color:var(--ink)}
+.topic:hover{transform:translateY(-2px);border-color:#7bcce9}
+.topic.active{border-color:#159bc9;background:#eaf8fd;box-shadow:0 0 0 3px #159bc91a}
+.emoji{font-size:32px;display:block;margin-bottom:8px}
+.topic strong{display:block;font-size:15px}
+.topic small{display:block;color:var(--muted);margin-top:5px;line-height:1.35}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:20px;box-shadow:0 6px 20px #17324b0a}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel-head h2{margin:0}
+.status{font-size:12px;background:#eef4f7;color:#526c7d;padding:7px 11px;border-radius:20px}
+.description{color:var(--muted);line-height:1.55;margin:12px 0 18px}
+.range-head{display:flex;justify-content:space-between;font-weight:bold;font-size:14px}
+input[type=range]{width:100%;accent-color:#159bc9;margin:14px 0}
+.range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:-7px}
+.wave{height:74px;background:#f0f8fc;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin:18px 0}
+.bar{height:12px;width:6px;background:#28a9d5;border-radius:5px}
+.wave.playing .bar{animation:wave .48s ease-in-out infinite alternate}
+.wave.playing .bar:nth-child(2n){animation-delay:.16s}.wave.playing .bar:nth-child(3n){animation-delay:.3s}
+@keyframes wave{to{height:43px}}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+button.action{border:0;border-radius:12px;padding:14px 20px;font-size:15px;font-weight:bold;cursor:pointer}
+.play{background:#087eae;color:white;flex:1}.stop{background:#edf3f6;color:#24445b;border:1px solid var(--line)!important}
+.play:hover{background:#066b95}.stop:hover{background:#e1ebf0}
+.hint{text-align:center;color:var(--muted);font-size:12px;margin:12px 0 0}
+.sym{background:linear-gradient(120deg,#e9f8fd,#f4faff);border:1px solid #cceaf5;border-radius:16px;padding:20px;margin-top:18px}
+.sym h2{margin:0 0 8px}.sym p{color:var(--muted);font-size:14px;line-height:1.5}
+.note{font-size:13px;line-height:1.55;color:var(--muted);background:#f4f8fa;border-radius:12px;padding:15px;margin-top:18px}
+footer{text-align:center;color:#718696;font-size:12px;padding:22px 0 5px}
+@media(max-width:650px){body{padding:12px}.hero{padding:22px}.planet{font-size:70px}.topics{grid-template-columns:repeat(2,1fr)}.panel{padding:17px}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div><div class="eyebrow">OUR PLANET • OUR SOUND</div>
+    <h1>EARTH INFORMATION<br>JUKEBOX</h1>
+    <p>Listen to what our planet is telling us!</p>
+    <div class="tag">A Grade 8 science project • Data Sonification</div>
+  </div><div class="planet" aria-hidden="true">🌍</div>
+</header>
+<h2>Choose an Earth sound</h2>
+<p class="sub">Select an environmental topic to explore how it can be represented through sound.</p>
+<section class="topics" aria-label="Environmental topics">
+  <button class="topic active" data-topic="temperature"><span class="emoji">🌡️</span><strong>Temperature</strong><small>Rising and falling heat</small></button>
+  <button class="topic" data-topic="rain"><span class="emoji">🌧️</span><strong>Rainfall</strong><small>Rain rhythms</small></button>
+  <button class="topic" data-topic="forest"><span class="emoji">🌳</span><strong>Forests</strong><small>Nature's harmony</small></button>
+  <button class="topic" data-topic="ice"><span class="emoji">🧊</span><strong>Ice &amp; Glaciers</strong><small>Melting ice tones</small></button>
+</section>
+<section class="panel">
+  <div class="panel-head"><h2 id="topicName">🌡️ Temperature</h2><span class="status" id="status">Ready to play</span></div>
+  <p class="description" id="description">Changing temperature is represented by changing musical pitch. Higher levels create higher notes.</p>
+  <div class="range-head"><label for="level">Environmental level</label><span id="levelValue">70%</span></div>
+  <input id="level" type="range" min="0" max="100" value="70">
+  <div class="range-labels"><span>Low</span><span>Medium</span><span>High</span></div>
+  <div class="wave" id="wave" aria-label="Animated sound visualisation">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+  <div class="actions"><button class="action play" id="play">▶ Generate Sound</button><button class="action stop" id="stop">■ Stop</button></div>
+  <p class="hint" id="hint">Change the level and press Generate Sound to hear the difference.</p>
+</section>
+<section class="sym">
+  <h2>🎵 Listen to Earth's complete story</h2>
+  <p>Play a short musical journey through all four environmental themes.</p>
+  <button class="action play" id="symphony" style="width:100%">▶ Play Earth Symphony</button>
+  <p id="symphonyStatus" style="margin-bottom:0">A musical demonstration created using computer-generated sounds.</p>
+</section>
+<div class="note"><strong>How does it work?</strong><br>
+This project demonstrates <strong>Data Sonification</strong> — converting information into sound. Different sound features, such as pitch, rhythm and tone, can represent environmental conditions.
+<br><br><strong>Science note:</strong> This version uses sample demonstration values, not live NASA measurements. In a full NASA-data version, real environmental observations would control the sounds.</div>
+<footer>Made by Rohan &amp; Team • Grade 8 Science Project 🌍</footer>
+</main>
+<script>
+(() => {
+ const topics = {
+  temperature:{name:"🌡️ Temperature",description:"Changing temperature is represented by changing musical pitch. Higher levels create higher notes.",hint:"Listen to the pitch rise as the temperature level increases."},
+  rain:{name:"🌧️ Rainfall",description:"Rainfall is represented through rhythmic sound pulses. Higher levels create faster and more frequent drops.",hint:"Listen to the rain rhythm change with the selected level."},
+  forest:{name:"🌳 Forests",description:"Forest conditions are represented by gentle musical harmonies. The level changes the notes and richness of the sound.",hint:"Listen to the changing nature-inspired harmony."},
+  ice:{name:"🧊 Ice & Glaciers",description:"Changes in ice are represented by cool, descending tones. The selected level changes the sound pattern.",hint:"Listen to the descending ice-inspired tones."}
+ };
+ const $=id=>document.getElementById(id);
+ let selected="temperature",ctx=null,nodes=[],runId=0,finishTimer=null;
+ function audioContext(){
+  if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
+  if(ctx.state==="suspended")ctx.resume();
+  return ctx;
+ }
+ function stop(){
+  runId++;
+  if(finishTimer)clearTimeout(finishTimer);
+  nodes.forEach(n=>{try{n.stop()}catch(e){}});
+  nodes=[];
+  $("wave").classList.remove("playing");
+  $("status").textContent="Ready to play";
+ }
+ function tone(freq,start,duration,volume=.1,type="sine",endFreq=null){
+  const a=audioContext(),osc=a.createOscillator(),gain=a.createGain();
+  osc.type=type;osc.frequency.setValueAtTime(Math.max(40,freq),start);
+  if(endFreq!==null)osc.frequency.exponentialRampToValueAtTime(Math.max(40,endFreq),start+duration);
+  gain.gain.setValueAtTime(.001,start);
+  gain.gain.exponentialRampToValueAtTime(volume,start+.035);
+  gain.gain.exponentialRampToValueAtTime(.001,start+duration);
+  osc.connect(gain);gain.connect(a.destination);osc.start(start);osc.stop(start+duration+.04);nodes.push(osc);
+ }
+ function rainDrop(start,duration,volume){
+  const a=audioContext(),length=Math.ceil(a.sampleRate*duration),buffer=a.createBuffer(1,length,a.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=Math.random()*2-1;
+  const src=a.createBufferSource(),filter=a.createBiquadFilter(),gain=a.createGain();
+  src.buffer=buffer;filter.type="lowpass";filter.frequency.value=1800;
+  gain.gain.setValueAtTime(.001,start);gain.gain.linearRampToValueAtTime(volume,start+.02);gain.gain.exponentialRampToValueAtTime(.001,start+duration);
+  src.connect(filter);filter.connect(gain);gain.connect(a.destination);src.start(start);src.stop(start+duration+.03);nodes.push(src);
+ }
+ function playSound(which,value){
+  stop();const thisRun=runId,a=audioContext(),now=a.currentTime+.06,v=value;
+  $("wave").classList.add("playing");$("status").textContent="♪ Playing sound";
+  if(which==="temperature"){
+   const f=170+v*570;tone(f,now,1.5,.13,"sine",f*(v>.5?1.5:.68));tone(f*.5,now+.1,1.2,.05,"triangle");
+  }else if(which==="rain"){
+   const count=3+Math.round(v*13);
+   for(let i=0;i<count;i++)rainDrop(now+i*(.95/count),.12+v*.08,.035+v*.055);
+  }else if(which==="forest"){
+   [261.63,329.63,392,523.25].forEach((n,i)=>tone(n*(.8+v*.4),now+i*.12,1.3,.065,"sine"));
+   tone(130.81+v*70,now,1.5,.045,"triangle");
+  }else if(which==="ice"){
+   const f=680-v*260;tone(f,now,1.65,.12,"sine",f*.42);tone(f*1.5,now+.2,1.25,.035,"triangle",f*.5);
+  }
+  finishTimer=setTimeout(()=>{if(runId===thisRun){$("wave").classList.remove("playing");$("status").textContent="Sound completed";nodes=[];}},1900);
+ }
+ document.querySelectorAll(".topic").forEach(button=>button.addEventListener("click",()=>{
+  stop();selected=button.dataset.topic;
+  document.querySelectorAll(".topic").forEach(b=>b.classList.toggle("active",b===button));
+  $("topicName").textContent=topics[selected].name;
+  $("description").textContent=topics[selected].description;
+  $("hint").textContent=topics[selected].hint;
+ }));
+ $("level").addEventListener("input",()=>$("levelValue").textContent=$("level").value+"%");
+ $("play").addEventListener("click",()=>playSound(selected,Number($("level").value)/100));
+ $("stop").addEventListener("click",()=>{$("symphonyStatus").textContent="Playback stopped.";stop();});
+ $("symphony").addEventListener("click",async()=>{
+  stop();const myRun=runId,items=[["temperature",.7],["rain",.5],["forest",.8],["ice",.6]];
+  $("symphonyStatus").textContent="Playing all four Earth themes...";
+  for(const [name,value] of items){
+   if(runId!==myRun)break;
+   $("topicName").textContent=topics[name].name;
+   $("description").textContent=topics[name].description;
+   playSound(name,value);
+   await new Promise(resolve=>setTimeout(resolve,1950));
+  }
+  if(runId===myRun){$("symphonyStatus").textContent="Earth Symphony completed!";$("status").textContent="Ready to play";$("wave").classList.remove("playing");}
+ });
+})();
+</script>
+</body>
+</html>
